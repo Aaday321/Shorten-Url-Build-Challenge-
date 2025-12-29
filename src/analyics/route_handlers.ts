@@ -19,9 +19,10 @@ export default class RouteHandlers {
         return context.text(shorty)
     }
 
-    static async getShorty(context: Context) {
+    static async redirect(context: Context) {
         //TODO: Implement get url feature
         //TODO: Implement analytics update and storage
+        return context.redirect('full url from db')
     }
 
     static async getAnalytics(context: Context) {

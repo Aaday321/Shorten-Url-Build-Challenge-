@@ -15,7 +15,7 @@ TODO:
 
 app.post('/shorty', RouteHandlers.makeShorty)
 
-app.get('/:id', RouteHandlers.getShorty)
+app.get('/:id', RouteHandlers.redirect)
 
 app.get('/analytics/:id', RouteHandlers.getAnalytics)
 
