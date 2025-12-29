@@ -43,19 +43,17 @@ app.get('/shorty', async (context) => {
            throw new Error('Invalid URL parameter')
        }
     }
-    let shorty = makeId()
-    while(!idIsUnique(shorty)){
-       shorty = makeId()
+    let newId = makeId()
+    while(!idIsUnique(newId)){
+       newId = makeId()
    }
 
     const proto = context.req.header('x-forwarded-proto') ?? 'http'
     const host = context.req.header('host')
     const baseUrl = `${proto}://${host}`
-    const shortenedUrl = `${baseUrl}${host}/${shorty}`
+    const shorty = `${baseUrl}${host}/${newId}`
 
-   return context.json({
-       shorty: shortenedUrl,
-   })
+   return context.text(shorty)
 })
 
 app.get('/:id', (context: Context) => {
