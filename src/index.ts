@@ -38,19 +38,23 @@ app.get('/shorty', async (context) => {
     const urlLength = issaNumber(customLength) ? Number(customLength) : DEFAULT_ID_LENGTH
     const makeId = idGenerator(urlLength)
 
-   if(customPath) {
+    if(customPath) {
        if (typeof customPath !== 'string' || !validateURL(url as string)) {
            throw new Error('Invalid URL parameter')
        }
-   }
-   let newId = makeId()
-   while(!idIsUnique(newId)){
-       newId = makeId()
+    }
+    let shorty = makeId()
+    while(!idIsUnique(shorty)){
+       shorty = makeId()
    }
 
+    const proto = context.req.header('x-forwarded-proto') ?? 'http'
+    const host = context.req.header('host')
+    const baseUrl = `${proto}://${host}`
+    const shortenedUrl = `${baseUrl}${host}/${shorty}`
+
    return context.json({
-       newUrl: url,
-       
+       newUrl: shortenedUrl,
    })
 })
 
