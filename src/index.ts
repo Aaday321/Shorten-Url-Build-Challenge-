@@ -1,36 +1,18 @@
 import { serve } from '@hono/node-server'
 import {type Context, Hono} from 'hono'
-import {customAlphabet, urlAlphabet} from "nanoid";
+import {idGenerator, idIsUnique, issaNumber, validateURL} from "./internals.js";
 
 const app = new Hono()
 const DEFAULT_ID_LENGTH = 10
 
 /*
 TODO:
- 1) Shorten url 
- 2) Track clicks
- 3) Referrers
- 4) Geographic data
+ 1) Shorten url -- DONE
+ 2) Retrieve url
+ 2) Track usage
+ 3) Track Referrers
+ 4) Track Geographic data
  */
-
-function validateURL(url: string){
-    // Thanks GPT for this regex 🥴. Someone tell me how to read this pls.
-    const allowed = /^[A-Za-z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+$/
-    return allowed.test(url)
-}
-
-function idIsUnique (url: string){
-    let db = {find:(s:string)=>s}
-    const match = db.find(url)
-    return !match
-}
-
-function issaNumber(hopefullyANumber: unknown) {
-    return !isNaN(Number(hopefullyANumber))
-}
-function idGenerator(size: number){
-    return ()=>customAlphabet(urlAlphabet)(size)
-}
 
 app.get('/shorty', async (context) => {
     const { url, customPath, customLength } = await context.req.parseBody()
