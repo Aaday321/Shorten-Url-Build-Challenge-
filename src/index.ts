@@ -1,7 +1,9 @@
 import { serve } from '@hono/node-server'
-import {Context, Hono} from 'hono'
+import {type Context, Hono} from 'hono'
+import {customAlphabet, urlAlphabet} from "nanoid";
 
 const app = new Hono()
+const DEFAULT_ID_LENGTH = 10
 
 /*
 TODO:
@@ -10,16 +12,46 @@ TODO:
  3) Referrers
  4) Geographic data
  */
-app.get('/shorty', async (c) => {
-    const {
-        url,
-        customPath,
-    } = await c.req.parseBody()
 
-    
-    return c.json({
-      newUrl
-  })
+function validateURL(url: string){
+    // Thanks GPT for this regex 🥴. Someone tell me how to read this pls.
+    const allowed = /^[A-Za-z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+$/
+    return allowed.test(url)
+}
+
+function idIsUnique (url: string){
+    let db = {find:(s:string)=>s}
+    const match = db.find(url)
+    return !match
+}
+
+function issaNumber(hopefullyANumber: unknown) {
+    return !isNaN(Number(hopefullyANumber))
+}
+function idGenerator(size: number){
+    return ()=>customAlphabet(urlAlphabet)(size)
+}
+
+app.get('/shorty', async (context) => {
+    const { url, customPath, customLength } = await context.req.parseBody()
+
+    const urlLength = issaNumber(customLength) ? Number(customLength) : DEFAULT_ID_LENGTH
+    const makeId = idGenerator(urlLength)
+
+   if(customPath) {
+       if (typeof customPath !== 'string' || !validateURL(url as string)) {
+           throw new Error('Invalid URL parameter')
+       }
+   }
+   let newId = makeId()
+   while(!idIsUnique(newId)){
+       newId = makeId()
+   }
+
+   return context.json({
+       newUrl: url,
+       
+   })
 })
 
 app.get('/:id', (context: Context) => {
