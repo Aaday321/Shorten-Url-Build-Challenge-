@@ -1,5 +1,5 @@
 import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
+import {Context, Hono} from 'hono'
 
 const app = new Hono()
 
@@ -10,8 +10,21 @@ TODO:
  3) Referrers
  4) Geographic data
  */
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
+app.get('/shorty', async (c) => {
+    const {
+        url,
+        customPath,
+    } = await c.req.parseBody()
+
+    
+    return c.json({
+      newUrl
+  })
+})
+
+app.get('/:id', (context: Context) => {
+    const { id } = context.req.param()
+    const url
 })
 
 app.get()
