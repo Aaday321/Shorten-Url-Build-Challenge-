@@ -13,7 +13,7 @@ TODO:
  4) Track Geographic data
 */
 
-app.get('/shorty', async (context) => {
+app.post('/shorty', async (context) => {
     const { url, customPath, length } = await context.req.parseBody()
 
     const id = idGenerator(length)
