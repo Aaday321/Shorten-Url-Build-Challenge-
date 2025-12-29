@@ -1,6 +1,6 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
-import RouteHandlers from "./analyics/route_handlers.js";
+import RouteHandlers from "./internals/route_handlers.js";
 
 const app = new Hono()
 
