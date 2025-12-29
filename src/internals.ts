@@ -2,7 +2,6 @@ import {customAlphabet, urlAlphabet} from "nanoid"
 import { type HonoRequest } from "hono"
 const DEFAULT_ID_LENGTH = 10
 
-
 function validateURL(url: string){
     // Thanks, GPT for this regex 🥴. Can anyone tell me how to read this pls?
     const allowed = /^[A-Za-z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+$/
