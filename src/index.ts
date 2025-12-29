@@ -54,7 +54,7 @@ app.get('/shorty', async (context) => {
     const shortenedUrl = `${baseUrl}${host}/${shorty}`
 
    return context.json({
-       newUrl: shortenedUrl,
+       shorty: shortenedUrl,
    })
 })
 
