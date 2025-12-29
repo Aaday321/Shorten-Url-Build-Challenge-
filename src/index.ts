@@ -1,9 +1,8 @@
 import { serve } from '@hono/node-server'
 import {type Context, Hono} from 'hono'
-import {idGenerator, idIsUnique, issaNumber, validateURL} from "./internals.js";
+import {idGenerator, makeBaseUrlFromRequestContext, validateURL} from "./internals.js";
 
 const app = new Hono()
-const DEFAULT_ID_LENGTH = 10
 
 /*
 TODO:
@@ -12,28 +11,21 @@ TODO:
  2) Track usage
  3) Track Referrers
  4) Track Geographic data
- */
+*/
 
 app.get('/shorty', async (context) => {
-    const { url, customPath, customLength } = await context.req.parseBody()
+    const { url, customPath, length } = await context.req.parseBody()
 
-    const urlLength = issaNumber(customLength) ? Number(customLength) : DEFAULT_ID_LENGTH
-    const makeId = idGenerator(urlLength)
+    const id = idGenerator(length)
 
     if(customPath) {
        if (typeof customPath !== 'string' || !validateURL(url as string)) {
            throw new Error('Invalid URL parameter')
        }
     }
-    let newId = makeId()
-    while(!idIsUnique(newId)){
-       newId = makeId()
-   }
 
-    const proto = context.req.header('x-forwarded-proto') ?? 'http'
-    const host = context.req.header('host')
-    const baseUrl = `${proto}://${host}`
-    const shorty = `${baseUrl}${host}/${newId}`
+    const baseUrl = makeBaseUrlFromRequestContext(context.req)
+    const shorty = `${baseUrl}/${id}`
 
    return context.text(shorty)
 })
